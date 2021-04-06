@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="ltd.newbee.mall.dao.GoodsCategoryMapper">
-    <resultMap id="BaseResultMap" type="ltd.newbee.mall.entity.GoodsCategory">
-        <id column="category_id" jdbcType="BIGINT" property="categoryId"/>
-        <result column="category_level" jdbcType="TINYINT" property="categoryLevel"/>
-        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
-        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
-        <result column="category_rank" jdbcType="INTEGER" property="categoryRank"/>
-        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="create_user" jdbcType="INTEGER" property="createUser"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="update_user" jdbcType="INTEGER" property="updateUser"/>
+<mapper namespace="com.ratel.shop.mall.mapper.GoodsCategoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.ratel.shop.mall.entity.GoodsCategory">
     </resultMap>
+
     <sql id="Base_Column_List">
-    category_id, category_level, parent_id, category_name, category_rank, is_deleted, 
-    create_time, create_user, update_time, update_user
-  </sql>
+        category_id, category_level, parent_id, category_name, category_rank, is_deleted,
+        create_time, create_user, update_time, update_user
+    </sql>
+
+    <select id="queryCategoryByParentIdAndLevel" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tb_ratel_goods_category
+        WHERE parent_id IN
+        <foreach item="parentId" collection="parentIds" open="(" separator="," close=")">
+            #{parentId}
+        </foreach>
+        AND category_level = #{categoryLevel}
+        AND is_deleted = 0
+        ORDER BY category_rank DESC
+        <if test="number > 0">
+            limit #{number}
+        </if>
+    </select>
+
+
     <select id="findGoodsCategoryList" parameterType="Map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -47,12 +57,7 @@
             and is_deleted = 0
         </where>
     </select>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from tb_newbee_mall_goods_category
-        where category_id = #{categoryId,jdbcType=BIGINT} and is_deleted=0
-    </select>
+
     <select id="selectByLevelAndName" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -60,21 +65,7 @@
         where category_name = #{categoryName,jdbcType=VARCHAR} and category_level = #{categoryLevel,jdbcType=TINYINT}
         and is_deleted = 0 limit 1
     </select>
-    <select id="selectByLevelAndParentIdsAndNumber" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from tb_newbee_mall_goods_category
-        where parent_id in
-        <foreach item="parentId" collection="parentIds" open="(" separator="," close=")">
-            #{parentId,jdbcType=BIGINT}
-        </foreach>
-        and category_level = #{categoryLevel,jdbcType=TINYINT}
-        and is_deleted = 0
-        order by category_rank desc
-        <if test="number>0">
-            limit #{number}
-        </if>
-    </select>
+
     <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
     update tb_newbee_mall_goods_category set is_deleted=1
     where category_id = #{categoryId,jdbcType=BIGINT} and is_deleted=0
@@ -86,7 +77,7 @@
             #{id}
         </foreach>
     </update>
-    <insert id="insert" parameterType="ltd.newbee.mall.entity.GoodsCategory">
+    <insert id="insert" parameterType="com.ratel.shop.mall.entity.GoodsCategory">
     insert into tb_newbee_mall_goods_category (category_id, category_level, parent_id, 
       category_name, category_rank, is_deleted, 
       create_time, create_user, update_time, 
@@ -96,7 +87,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{updateUser,jdbcType=INTEGER})
   </insert>
-    <insert id="insertSelective" parameterType="ltd.newbee.mall.entity.GoodsCategory">
+    <insert id="insertSelective" parameterType="com.ratel.shop.mall.entity.GoodsCategory">
         insert into tb_newbee_mall_goods_category
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="categoryId != null">
@@ -163,7 +154,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="ltd.newbee.mall.entity.GoodsCategory">
+    <update id="updateByPrimaryKeySelective" parameterType="com.ratel.shop.mall.entity.GoodsCategory">
         update tb_newbee_mall_goods_category
         <set>
             <if test="categoryLevel != null">
@@ -196,7 +187,7 @@
         </set>
         where category_id = #{categoryId,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="ltd.newbee.mall.entity.GoodsCategory">
+    <update id="updateByPrimaryKey" parameterType="com.ratel.shop.mall.entity.GoodsCategory">
     update tb_newbee_mall_goods_category
     set category_level = #{categoryLevel,jdbcType=TINYINT},
       parent_id = #{parentId,jdbcType=BIGINT},

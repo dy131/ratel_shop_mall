@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+    <!-- 彩色日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%thread]){faint} %clr(%-40.40logger{39}){cyan} %clr([%L]) %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
+    <contextName>tb_p</contextName>
+
+    <!--文件夹在当前项目磁盘根目录-->
+    <property name="LOG_HOME" value="/opt/logs"/>
+
+    <!--控制台输出appender-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!--设置输出格式-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <!--设置编码-->
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!--  日志记录器，日期滚动记录
+            ERROR 级别
+     -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <append>true</append>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件的路径与名称,{yyyy-MM-dd.HH}精确到小时,则按小时分割保存-->
+            <FileNamePattern>
+                ${LOG_HOME}/%d{yyyyMMdd}/tb_plan_error.%d{yyyy-MM-dd.HH}.log
+            </FileNamePattern>
+            <!-- 如果当前是按小时保存，则保存72小时(=3天)内的日志 -->
+            <MaxHistory>168</MaxHistory>
+        </rollingPolicy>
+        <!--输出格式-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--设置编码-->
+            <charset>UTF-8</charset>
+            <!--格式化输出-->
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <!-- 日志记录器，日期滚动记录
+            ALL  级别
+    -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <append>true</append>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件的路径与名称,{yyyy-MM-dd.HH}精确到小时,则按小时分割保存-->
+            <FileNamePattern>
+                ${LOG_HOME}/%d{yyyyMMdd}/tb_plan.%d{yyyy-MM-dd.HH}.log
+            </FileNamePattern>
+            <!-- 如果当前是按小时保存，则保存72小时(=3天)内的日志 -->
+            <MaxHistory>168</MaxHistory>
+        </rollingPolicy>
+        <!--输出格式-->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--设置编码-->
+            <charset>UTF-8</charset>
+            <!--格式化输出-->
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- FrameworkServlet日志-->
+    <logger name="org.springframework" level="WARN"/>
+
+    <!-- mybatis日志打印-->
+    <logger name="org.apache.ibatis" level="DEBUG"/>
+    <logger name="java.sql" level="DEBUG"/>
+
+    <!--  项目 mapper 路径
+            console控制台显示sql语句：STDOUT.filter.level -> debug级别
+    -->
+    <logger name="com.ratel.shop.mall.mapper" level="DEBUG"></logger>
+    <!-- 生产环境下，将此级别配置为适合的级别，以免日志文件太多或影响程序性能 -->
+    <root level="INFO">
+        <appender-ref ref="ERROR_FILE"/>
+        <appender-ref ref="FILE"/>
+        <!-- 生产环境将请stdout去掉 -->
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

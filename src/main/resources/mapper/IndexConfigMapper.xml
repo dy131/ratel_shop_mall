@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="ltd.newbee.mall.dao.IndexConfigMapper">
-    <resultMap id="BaseResultMap" type="ltd.newbee.mall.entity.IndexConfig">
-        <id column="config_id" jdbcType="BIGINT" property="configId"/>
-        <result column="config_name" jdbcType="VARCHAR" property="configName"/>
-        <result column="config_type" jdbcType="TINYINT" property="configType"/>
-        <result column="goods_id" jdbcType="BIGINT" property="goodsId"/>
-        <result column="redirect_url" jdbcType="VARCHAR" property="redirectUrl"/>
-        <result column="config_rank" jdbcType="INTEGER" property="configRank"/>
-        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="create_user" jdbcType="INTEGER" property="createUser"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="update_user" jdbcType="INTEGER" property="updateUser"/>
+<mapper namespace="com.ratel.shop.mall.mapper.IndexConfigMapper">
+    <resultMap id="BaseResultMap" type="com.ratel.shop.mall.entity.IndexConfig">
     </resultMap>
+
     <sql id="Base_Column_List">
-    config_id, config_name, config_type, goods_id, redirect_url, config_rank, is_deleted, 
-    create_time, create_user, update_time, update_user
-  </sql>
+        config_id, config_name, config_type, goods_id, redirect_url, config_rank, is_deleted,
+        create_time, create_user, update_time, update_user
+    </sql>
+
+    <select id="queryIndexConfigGoodsByType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tb_ratel_index_config
+        WHERE config_type = #{configType} AND is_deleted = 0
+        ORDER BY config_rank DESC
+        limit #{number}
+    </select>
 
     <select id="findIndexConfigList" parameterType="Map" resultMap="BaseResultMap">
         select
@@ -43,14 +42,7 @@
             and is_deleted = 0
         </where>
     </select>
-    <select id="findIndexConfigsByTypeAndNum" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from tb_newbee_mall_index_config
-        where config_type = #{configType} and is_deleted = 0
-        order by config_rank desc
-        limit #{number}
-    </select>
+
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -68,7 +60,7 @@
             #{id}
         </foreach>
     </update>
-    <insert id="insert" parameterType="ltd.newbee.mall.entity.IndexConfig">
+    <insert id="insert" parameterType="com.ratel.shop.mall.entity.IndexConfig">
     insert into tb_newbee_mall_index_config (config_id, config_name, config_type, 
       goods_id, redirect_url, config_rank, 
       is_deleted, create_time, create_user, 
@@ -78,7 +70,7 @@
       #{isDeleted,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=INTEGER}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER})
   </insert>
-    <insert id="insertSelective" parameterType="ltd.newbee.mall.entity.IndexConfig">
+    <insert id="insertSelective" parameterType="com.ratel.shop.mall.entity.IndexConfig">
         insert into tb_newbee_mall_index_config
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="configId != null">
@@ -151,7 +143,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="ltd.newbee.mall.entity.IndexConfig">
+    <update id="updateByPrimaryKeySelective" parameterType="com.ratel.shop.mall.entity.IndexConfig">
         update tb_newbee_mall_index_config
         <set>
             <if test="configName != null">
@@ -187,7 +179,7 @@
         </set>
         where config_id = #{configId,jdbcType=BIGINT}
     </update>
-    <update id="updateByPrimaryKey" parameterType="ltd.newbee.mall.entity.IndexConfig">
+    <update id="updateByPrimaryKey" parameterType="com.ratel.shop.mall.entity.IndexConfig">
     update tb_newbee_mall_index_config
     set config_name = #{configName,jdbcType=VARCHAR},
       config_type = #{configType,jdbcType=TINYINT},

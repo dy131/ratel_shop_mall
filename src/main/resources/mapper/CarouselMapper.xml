@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="ltd.newbee.mall.dao.CarouselMapper">
-    <resultMap id="BaseResultMap" type="ltd.newbee.mall.entity.Carousel">
-        <id column="carousel_id" jdbcType="INTEGER" property="carouselId"/>
-        <result column="carousel_url" jdbcType="VARCHAR" property="carouselUrl"/>
-        <result column="redirect_url" jdbcType="VARCHAR" property="redirectUrl"/>
-        <result column="carousel_rank" jdbcType="INTEGER" property="carouselRank"/>
-        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="create_user" jdbcType="INTEGER" property="createUser"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="update_user" jdbcType="INTEGER" property="updateUser"/>
+<mapper namespace="com.ratel.shop.mall.mapper.CarouselMapper">
+    <resultMap id="BaseResultMap" type="com.ratel.shop.mall.entity.Carousel">
     </resultMap>
+
     <sql id="Base_Column_List">
-    carousel_id, carousel_url, redirect_url, carousel_rank, is_deleted, create_time, 
-    create_user, update_time, update_user
-  </sql>
+        carousel_id, carousel_url, redirect_url, carousel_rank, is_deleted, create_time,
+        create_user, update_time, update_user
+    </sql>
+
+    <select id="queryCarouselByNum" parameterType="int" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tb_ratel_carousel
+        WHERE is_deleted = 0
+        ORDER BY carousel_rank DESC
+        limit #{number}
+    </select>
+
+
     <select id="findCarouselList" parameterType="Map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -36,19 +39,12 @@
         from tb_newbee_mall_carousel
         where carousel_id = #{carouselId,jdbcType=INTEGER}
     </select>
-    <select id="findCarouselsByNum" parameterType="int" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from tb_newbee_mall_carousel
-        where is_deleted = 0
-        order by carousel_rank desc
-        limit #{number}
-    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from tb_newbee_mall_carousel
     where carousel_id = #{carouselId,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="ltd.newbee.mall.entity.Carousel">
+    <insert id="insert" parameterType="com.ratel.shop.mall.entity.Carousel">
     insert into tb_newbee_mall_carousel (carousel_id, carousel_url, redirect_url, 
       carousel_rank, is_deleted, create_time, 
       create_user, update_time, update_user
@@ -58,7 +54,7 @@
       #{createUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}
       )
   </insert>
-    <insert id="insertSelective" parameterType="ltd.newbee.mall.entity.Carousel">
+    <insert id="insertSelective" parameterType="com.ratel.shop.mall.entity.Carousel">
         insert into tb_newbee_mall_carousel
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="carouselId != null">
@@ -119,7 +115,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="ltd.newbee.mall.entity.Carousel">
+    <update id="updateByPrimaryKeySelective" parameterType="com.ratel.shop.mall.entity.Carousel">
         update tb_newbee_mall_carousel
         <set>
             <if test="carouselUrl != null">
@@ -149,7 +145,7 @@
         </set>
         where carousel_id = #{carouselId,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="ltd.newbee.mall.entity.Carousel">
+    <update id="updateByPrimaryKey" parameterType="com.ratel.shop.mall.entity.Carousel">
     update tb_newbee_mall_carousel
     set carousel_url = #{carouselUrl,jdbcType=VARCHAR},
       redirect_url = #{redirectUrl,jdbcType=VARCHAR},
