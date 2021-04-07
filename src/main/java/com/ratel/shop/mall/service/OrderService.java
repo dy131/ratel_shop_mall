@@ -1,11 +1,10 @@
 
 package com.ratel.shop.mall.service;
 
-import com.ratel.shop.mall.controller.dto.OrderDetailDto;
-import com.ratel.shop.mall.controller.vo.OrderDetailVO;
-import com.ratel.shop.mall.controller.vo.OrderItemVO;
-import com.ratel.shop.mall.controller.vo.ShoppingCartItemVO;
-import com.ratel.shop.mall.controller.vo.NewBeeMallUserVO;
+import com.ratel.shop.mall.dto.OrderDetailDto;
+import com.ratel.shop.mall.dto.OrderItemDto;
+import com.ratel.shop.mall.dto.ShoppingCartItemDto;
+import com.ratel.shop.mall.dto.UserDto;
 import com.ratel.shop.mall.entity.Order;
 import com.ratel.shop.mall.util.PageQueryUtil;
 import com.ratel.shop.mall.util.PageResult;
@@ -18,6 +17,16 @@ public interface OrderService {
      * 订单详情
      */
     OrderDetailDto queryOrderDetailByOrderNo(String orderNo, Long userId);
+
+    /**
+     * 我的订单列表
+     */
+    PageResult queryMyOrdersPageList(PageQueryUtil pageQueryUtil);
+
+    /**
+     * 保存订单
+     */
+    String saveOrder(UserDto userDto, List<ShoppingCartItemDto> shoppingCartItemDto);
 
     /**
      * 后台分页
@@ -59,16 +68,6 @@ public interface OrderService {
      */
     String closeOrder(Long[] ids);
 
-    /**
-     * 保存订单
-     *
-     * @param user
-     * @param myShoppingCartItems
-     * @return
-     */
-    String saveOrder(NewBeeMallUserVO user, List<ShoppingCartItemVO> myShoppingCartItems);
-
-
 
     /**
      * 获取订单详情
@@ -78,13 +77,6 @@ public interface OrderService {
      */
     Order getNewBeeMallOrderByOrderNo(String orderNo);
 
-    /**
-     * 我的订单列表
-     *
-     * @param pageUtil
-     * @return
-     */
-    PageResult getMyOrders(PageQueryUtil pageUtil);
 
     /**
      * 手动取消订单
@@ -106,5 +98,5 @@ public interface OrderService {
 
     String paySuccess(String orderNo, int payType);
 
-    List<OrderItemVO> getOrderItems(Long id);
+    List<OrderItemDto> getOrderItems(Long id);
 }

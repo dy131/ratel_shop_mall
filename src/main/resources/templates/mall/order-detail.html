@@ -1,7 +1,7 @@
-<!-- Copyright (c) 2019-2020 十三 all rights reserved. -->
+<!-- Copyright (c) 2021-2022 all rights reserved. -->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="mall/header::head-fragment('NewBee商城-订单详情','order-detail')">
+<head th:replace="mall/header::head-fragment('Ratel商城-订单详情','order-detail')">
 </head>
 <link rel="stylesheet" th:href="@{/admin/plugins/sweetalert/sweetalert.css}"/>
 <body>
@@ -26,20 +26,20 @@
                         </h1>
                         <div class="more clearfix">
                             <h2 class="subtitle">订单号：
-                                <th:block th:text="${orderDetailVO.orderNo}"></th:block>
+                                <th:block th:text="${goodsDetailDto.orderNo}"></th:block>
                                 <span class="tag tag-subsidy"></span>
                             </h2>
                             <div class="actions">
-                                <input type="hidden" id="orderNoValue" th:value="${orderDetailVO.orderNo}">
-                                <th:block th:if="${orderDetailVO.orderStatus>0 and orderDetailVO.orderStatus<3}">
+                                <input type="hidden" id="orderNoValue" th:value="${goodsDetailDto.orderNo}">
+                                <th:block th:if="${goodsDetailDto.orderStatus>0 and goodsDetailDto.orderStatus<3}">
                                     <a onclick="cancelOrder()"
                                        class="btn btn-small btn-line-gray" title="取消订单">取消订单</a>
                                 </th:block>
-                                <th:block th:if="${orderDetailVO.orderStatus==0}">
+                                <th:block th:if="${goodsDetailDto.orderStatus==0}">
                                     <a onclick="payOrder()"
                                        class="btn btn-small btn-primary" title="去支付">去支付</a>
                                 </th:block>
-                                <th:block th:if="${orderDetailVO.orderStatus==3}">
+                                <th:block th:if="${goodsDetailDto.orderStatus==3}">
                                     <a onclick="finishOrder()"
                                        class="btn btn-small btn-primary" title="确认收货">确认收货</a>
                                 </th:block>
@@ -51,77 +51,77 @@
                             <div class="order-detail">
 
                                 <div class="order-summary">
-                                    <div class="order-status" th:text="${orderDetailVO.orderStatusString}">
+                                    <div class="order-status" th:text="${goodsDetailDto.orderStatusString}">
                                         newbee
                                     </div>
                                     <div class="order-desc">
-                                        <th:block th:if="${orderDetailVO.orderStatus==0}">请尽快完成支付哦~</th:block>
-                                        <th:block th:if="${orderDetailVO.orderStatus==1}">newbee商城订单确认中~</th:block>
-                                        <th:block th:if="${orderDetailVO.orderStatus==2}">newbee仓库正在紧急配货中~</th:block>
-                                        <th:block th:if="${orderDetailVO.orderStatus==3}">订单已出库正在快马加鞭向您奔来~</th:block>
-                                        <th:block th:if="${orderDetailVO.orderStatus==4}">交易成功，感谢您对newbee商城的支持~
+                                        <th:block th:if="${goodsDetailDto.orderStatus==0}">请尽快完成支付哦~</th:block>
+                                        <th:block th:if="${goodsDetailDto.orderStatus==1}">newbee商城订单确认中~</th:block>
+                                        <th:block th:if="${goodsDetailDto.orderStatus==2}">newbee仓库正在紧急配货中~</th:block>
+                                        <th:block th:if="${goodsDetailDto.orderStatus==3}">订单已出库正在快马加鞭向您奔来~</th:block>
+                                        <th:block th:if="${goodsDetailDto.orderStatus==4}">交易成功，感谢您对newbee商城的支持~
                                         </th:block>
-                                        <th:block th:if="${orderDetailVO.orderStatus<0}">交易已关闭~</th:block>
+                                        <th:block th:if="${goodsDetailDto.orderStatus<0}">交易已关闭~</th:block>
 
                                     </div>
-                                    <th:block th:if="${orderDetailVO.orderStatus>=0}">
+                                    <th:block th:if="${goodsDetailDto.orderStatus>=0}">
                                         <div class="order-progress">
                                             <ol class="progress-list clearfix progress-list-5">
-                                                <th:block th:if="${orderDetailVO.orderStatus==0}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus==0}">
                                                     <li class="step step-active">
                                                 </th:block>
-                                                <th:block th:if="${orderDetailVO.orderStatus>0}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus>0}">
                                                     <li class="step step-first">
                                                 </th:block>
                                                 <div class="progress"><span class="text">下单</span></div>
                                                 <div class="info"
-                                                     th:text="${#dates.format(orderDetailVO.createTime, 'yyyy-MM-dd HH:mm:ss')}">
+                                                     th:text="${#dates.format(goodsDetailDto.createTime, 'yyyy-MM-dd HH:mm:ss')}">
                                                     02月07日
                                                 </div>
                                                 </li>
-                                                <th:block th:if="${orderDetailVO.orderStatus<1}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus<1}">
                                                     <li class="step">
                                                 </th:block>
-                                                <th:block th:if="${orderDetailVO.orderStatus==1}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus==1}">
                                                     <li class="step step-active">
                                                 </th:block>
-                                                <th:block th:if="${orderDetailVO.orderStatus>1}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus>1}">
                                                     <li class="step step-done">
                                                 </th:block>
                                                 <div class="progress"><span class="text">付款</span></div>
                                                 <div class="info"></div>
                                                 </li>
-                                                <th:block th:if="${orderDetailVO.orderStatus<2}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus<2}">
                                                     <li class="step">
                                                 </th:block>
-                                                <th:block th:if="${orderDetailVO.orderStatus==2}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus==2}">
                                                     <li class="step step-active">
                                                 </th:block>
-                                                <th:block th:if="${orderDetailVO.orderStatus>2}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus>2}">
                                                     <li class="step step-done">
                                                 </th:block>
                                                 <div class="progress"><span class="text">配货</span></div>
                                                 <div class="info"></div>
                                                 </li>
-                                                <th:block th:if="${orderDetailVO.orderStatus<3}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus<3}">
                                                     <li class="step">
                                                 </th:block>
-                                                <th:block th:if="${orderDetailVO.orderStatus==3}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus==3}">
                                                     <li class="step step-active">
                                                 </th:block>
-                                                <th:block th:if="${orderDetailVO.orderStatus>3}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus>3}">
                                                     <li class="step step-done">
                                                 </th:block>
                                                 <div class="progress"><span class="text">出库</span></div>
                                                 <div class="info"></div>
                                                 </li>
-                                                <th:block th:if="${orderDetailVO.orderStatus<4}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus<4}">
                                                     <li class="step">
                                                 </th:block>
-                                                <th:block th:if="${orderDetailVO.orderStatus==4}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus==4}">
                                                     <li class="step step-active">
                                                 </th:block>
-                                                <th:block th:if="${orderDetailVO.orderStatus>4}">
+                                                <th:block th:if="${goodsDetailDto.orderStatus>4}">
                                                     <li class="step step-last">
                                                 </th:block>
                                                 <div class="progress"><span class="text">交易成功</span></div>

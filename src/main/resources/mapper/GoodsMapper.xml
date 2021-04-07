@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ratel.shop.mall.mapper.NewBeeMallGoodsMapper">
+<mapper namespace="com.ratel.shop.mall.mapper.GoodsMapper">
     <resultMap id="BaseResultMap" type="com.ratel.shop.mall.entity.Goods">
     </resultMap>
 
@@ -10,10 +10,10 @@
         update_time
       </sql>
 
-    <select id="queryGoodsByIds" resultMap="BaseResultMap">
+    <select id="queryGoodsByGoodIds" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM tb_ratel_goods_info
+        FROM tb_ratel_goods
         WHERE goods_id IN
         <foreach item="goodId" collection="goodIds" open="(" separator="," close=")">
             #{goodId}
@@ -28,7 +28,7 @@
     <select id="queryGoodsPageList" parameterType="Map" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM tb_ratel_goods_info
+        FROM tb_ratel_goods
         <where>
             <if test="keyword!=null and keyword!=''">
                 AND (goods_name LIKE CONCAT('%',#{keyword},'%') OR goods_intro LIKE CONCAT('%',#{keyword},'%'))
@@ -59,7 +59,7 @@
     </select>
 
     <select id="queryGoodsPageCount" parameterType="Map" resultType="int">
-        SELECT COUNT(*) FROM tb_ratel_goods_info
+        SELECT COUNT(*) FROM tb_ratel_goods
         <where>
             <if test="keyword!=null and keyword!=''">
                 AND (goods_name LIKE CONCAT('%',#{keyword},'%') OR goods_intro LIKE CONCAT('%',#{keyword},'%'))
@@ -71,6 +71,13 @@
                 AND goods_sell_status = #{goodsSellStatus}
             </if>
         </where>
+    </select>
+
+    <select id="queryGoodsByGoodId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tb_ratel_goods
+        WHERE goods_id = #{goodsId}
     </select>
 
     <insert id="batchInsert">

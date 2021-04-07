@@ -1,7 +1,7 @@
 <!-- Copyright (c) 2019-2020 十三 all rights reserved. -->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="mall/header::head-fragment('NewBee商城-首页','index')">
+<head th:replace="mall/header::head-fragment('Ratel商城-首页','index')">
 </head>
 <body>
 <header th:replace="mall/header::header-fragment"></header>
@@ -10,25 +10,31 @@
     <div id="banner">
         <div class="all-sort-list">
             <th:block th:each="category : ${categories}">
-            <div class="item">
-                <h3><span>·</span><a href="##"><th:block th:text="${category.categoryName}"></th:block></a></h3>
-                <div class="item-list clearfix">
-                    <div class="subitem">
-                        <th:block th:each="secondLevelCategory : ${category.secondLevelCategoryVOS}">
-                        <dl class="fore1">
-                            <dt><a href="#"><th:block th:text="${secondLevelCategory.categoryName}"></th:block></a></dt>
-                            <dd>
-                                <th:block th:each="thirdLevelCategory : ${secondLevelCategory.thirdLevelCategoryVOS}">
-                                <em><a href="#"th:href="@{'/search?goodsCategoryId='+${thirdLevelCategory.categoryId}}">
-                                    <th:block th:text="${thirdLevelCategory.categoryName}"></th:block>
-                                </a></em>
-                                </th:block>
-                            </dd>
-                        </dl>
-                        </th:block>
+                <div class="item">
+                    <h3><span>·</span><a href="##">
+                        <th:block th:text="${category.categoryName}"></th:block>
+                    </a></h3>
+                    <div class="item-list clearfix">
+                        <div class="subitem">
+                            <th:block th:each="secondLevelCategory : ${category.secondLevelCategoryDtoList}">
+                                <dl class="fore1">
+                                    <dt><a href="#">
+                                        <th:block th:text="${secondLevelCategory.categoryName}"></th:block>
+                                    </a></dt>
+                                    <dd>
+                                        <th:block
+                                                th:each="thirdLevelCategory : ${secondLevelCategory.thirdLevelCategoryDtoList}">
+                                            <em><a href="#"
+                                                   th:href="@{'/search?categoryId='+${thirdLevelCategory.categoryId}}">
+                                                <th:block th:text="${thirdLevelCategory.categoryName}"></th:block>
+                                            </a></em>
+                                        </th:block>
+                                    </dd>
+                                </dl>
+                            </th:block>
+                        </div>
                     </div>
                 </div>
-            </div>
             </th:block>
         </div>
         <div class="swiper-container fl">
@@ -64,17 +70,17 @@
 
     <div id="sub_banner">
         <!-- 已配置热销商品则显示配置内容 -->
-        <th:block th:unless="${#lists.isEmpty(hotGoodses)}">
-            <th:block th:each="hotGoodse : ${hotGoodses}">
+        <th:block th:unless="${#lists.isEmpty(hotGoods)}">
+            <th:block th:each="hotGood : ${hotGoods}">
                 <div class="hot-image">
-                    <a th:href="@{'/goods/detail/'+${hotGoodse.goodsId}}">
-                        <img th:src="@{${hotGoodse.goodsCoverImg}}" th:alt="${hotGoodse.goodsName}">
+                    <a th:href="@{'/goods/detail/'+${hotGood.goodsId}}">
+                        <img th:src="@{${hotGood.goodsCoverImg}}" th:alt="${hotGood.goodsName}">
                     </a>
                 </div>
             </th:block>
         </th:block>
         <!-- 未配置热销商品则显示默认 -->
-        <th:block th:if="${#lists.isEmpty(hotGoodses)}">
+        <th:block th:if="${#lists.isEmpty(hotGoods)}">
             <div class="hot-image">
                 <a href="##">
                     <img src="./mall/image/sub_banner/r4.jpg" alt="">
@@ -102,20 +108,20 @@
         <h2>新品上线</h2>
         <ul>
             <!-- 已配置新品则显示配置内容 -->
-            <th:block th:unless="${#lists.isEmpty(newGoodses)}">
-                <th:block th:each="newGoods : ${newGoodses}">
+            <th:block th:unless="${#lists.isEmpty(newGoods)}">
+                <th:block th:each="newGood : ${newGoods}">
                     <li>
-                        <a th:href="@{'/goods/detail/'+${newGoods.goodsId}}">
-                            <img th:src="@{${newGoods.goodsCoverImg}}" th:alt="${newGoods.goodsName}">
-                            <p class="name" th:text="${newGoods.goodsName}">NewBeeMall</p>
-                            <p class="discount" th:text="${newGoods.goodsIntro}">NewBeeMall</p>
-                            <p class="item_price" th:text="${newGoods.sellingPrice}">NewBeeMall</p>
+                        <a th:href="@{'/goods/detail/'+${newGood.goodsId}}">
+                            <img th:src="@{${newGood.goodsCoverImg}}" th:alt="${newGood.goodsName}">
+                            <p class="name" th:text="${newGood.goodsName}">NewBeeMall</p>
+                            <p class="discount" th:text="${newGood.goodsIntro}">NewBeeMall</p>
+                            <p class="item_price" th:text="${newGood.sellingPrice}">NewBeeMall</p>
                         </a>
                     </li>
                 </th:block>
             </th:block>
             <!-- 未配置则显示默认 -->
-            <th:block th:if="${#lists.isEmpty(newGoodses)}">
+            <th:block th:if="${#lists.isEmpty(newGoods)}">
                 <li>
                     <a href="##">
                         <img src="./mall/image/sub_banner/m6.jpg" alt=""/>
@@ -165,19 +171,19 @@
         <a href="##" class="more">查看更多>></a>
         <ul>
             <!-- 已配置推荐商品则显示配置内容 -->
-            <th:block th:unless="${#lists.isEmpty(recommendGoodses)}">
-                <th:block th:each="recommendGoods : ${recommendGoodses}">
+            <th:block th:unless="${#lists.isEmpty(recommendGoods)}">
+                <th:block th:each="recommendGood : ${recommendGoods}">
                     <li>
-                        <a th:href="@{'/goods/detail/'+${recommendGoods.goodsId}}">
-                            <div class="info discount" th:text="${recommendGoods.tag}">
+                        <a th:href="@{'/goods/detail/'+${recommendGood.goodsId}}">
+                            <div class="info discount" th:text="${recommendGood.tag}">
                                 新品
                             </div>
-                            <img th:src="@{${recommendGoods.goodsCoverImg}}" th:alt="${recommendGoods.goodsName}">
-                            <p class="name" th:text="${recommendGoods.goodsName}">NewBeeMall</p>
-                            <p class="item_price" th:text="${recommendGoods.sellingPrice}">NewBeeMall</p>
+                            <img th:src="@{${recommendGood.goodsCoverImg}}" th:alt="${recommendGood.goodsName}">
+                            <p class="name" th:text="${recommendGood.goodsName}">NewBeeMall</p>
+                            <p class="item_price" th:text="${recommendGood.sellingPrice}">NewBeeMall</p>
                             <p class="counter">猜你喜欢</p>
                             <div class="comment">
-                                <p>新蜂精选</p>
+                                <p>Ratel精选</p>
                                 <p>好物也可以不贵</p>
                             </div>
                         </a>
@@ -185,7 +191,7 @@
                 </th:block>
             </th:block>
             <!-- 未配置则显示默认 -->
-            <th:block th:if="${#lists.isEmpty(recommendGoodses)}">
+            <th:block th:if="${#lists.isEmpty(recommendGoods)}">
                 <li>
                     <a href="##">
                         <div class="info discount">
@@ -196,7 +202,7 @@
                         <p class="price">1499元</p>
                         <p class="counter">猜你喜欢</p>
                         <div class="comment">
-                            <p>新蜂精选</p>
+                            <p>Ratel精选</p>
                             <p>好物也可以不贵</p>
                         </div>
                     </a>
@@ -211,7 +217,7 @@
                         <p class="price">1499元</p>
                         <p class="counter">猜你喜欢</p>
                         <div class="comment">
-                            <p>新蜂精选</p>
+                            <p>Ratel精选</p>
                             <p>好物也可以不贵</p>
                         </div>
                     </a>
@@ -226,7 +232,7 @@
                         <p class="price">1499元</p>
                         <p class="counter">猜你喜欢</p>
                         <div class="comment">
-                            <p>新蜂精选</p>
+                            <p>Ratel精选</p>
                             <p>好物也可以不贵</p>
                         </div>
                     </a>
@@ -241,7 +247,7 @@
                         <p class="price">1499元</p>
                         <p class="counter">猜你喜欢</p>
                         <div class="comment">
-                            <p>新蜂精选</p>
+                            <p>Ratel精选</p>
                             <p>好物也可以不贵</p>
                         </div>
                     </a>
@@ -256,7 +262,7 @@
                         <p class="price">1499元</p>
                         <p class="counter">猜你喜欢</p>
                         <div class="comment">
-                            <p>新蜂精选</p>
+                            <p>Ratel精选</p>
                             <p>好物也可以不贵</p>
                         </div>
                     </a>
@@ -271,7 +277,7 @@
                         <p class="price">1499元</p>
                         <p class="counter">猜你喜欢</p>
                         <div class="comment">
-                            <p>新蜂精选</p>
+                            <p>Ratel精选</p>
                             <p>好物也可以不贵</p>
                         </div>
                     </a>
@@ -286,7 +292,7 @@
                         <p class="price">1499元</p>
                         <p class="counter">猜你喜欢</p>
                         <div class="comment">
-                            <p>新蜂精选</p>
+                            <p>Ratel精选</p>
                             <p>好物也可以不贵</p>
                         </div>
                     </a>
@@ -301,7 +307,7 @@
                         <p class="price">1499元</p>
                         <p class="counter">猜你喜欢</p>
                         <div class="comment">
-                            <p>新蜂精选</p>
+                            <p>Ratel精选</p>
                             <p>好物也可以不贵</p>
                         </div>
                     </a>
@@ -316,7 +322,7 @@
                         <p class="price">1499元</p>
                         <p class="counter">猜你喜欢</p>
                         <div class="comment">
-                            <p>新蜂精选</p>
+                            <p>Ratel精选</p>
                             <p>好物也可以不贵</p>
                         </div>
                     </a>
@@ -331,7 +337,7 @@
                         <p class="price">1499元</p>
                         <p class="counter">猜你喜欢</p>
                         <div class="comment">
-                            <p>新蜂精选</p>
+                            <p>Ratel精选</p>
                             <p>好物也可以不贵</p>
                         </div>
                     </a>

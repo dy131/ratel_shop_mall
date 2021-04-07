@@ -40,7 +40,7 @@ public class BusinessExceptionHandler {
             modelAndView.addObject("url", req.getRequestURL());
             modelAndView.addObject("stackTrace", e.getStackTrace());
             modelAndView.addObject("author", "十三");
-            modelAndView.addObject("ltd", "新蜂商城");
+            modelAndView.addObject("ltd", "XXXXX商城");
             modelAndView.setViewName("error/error");
             return modelAndView;
         }

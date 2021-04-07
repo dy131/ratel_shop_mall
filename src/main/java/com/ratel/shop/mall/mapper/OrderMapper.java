@@ -10,6 +10,11 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface OrderMapper extends BaseMapper<Order> {
+
+    List<Order> queryTotalOrdersPageList(PageQueryUtil pageQueryUtil);
+
+    int queryTotalOrdersCount(PageQueryUtil pageQueryUtil);
+
     int deleteByPrimaryKey(Long orderId);
 
     int insert(Order record);
@@ -22,9 +27,8 @@ public interface OrderMapper extends BaseMapper<Order> {
 
     int updateByPrimaryKey(Order record);
 
-    List<Order> findNewBeeMallOrderList(PageQueryUtil pageUtil);
 
-    int getTotalNewBeeMallOrders(PageQueryUtil pageUtil);
+
 
     List<Order> selectByPrimaryKeys(@Param("orderIds") List<Long> orderIds);
 

@@ -1,7 +1,7 @@
 
 package com.ratel.shop.mall.service;
 
-import com.ratel.shop.mall.controller.dto.ShoppingCartItemDto;
+import com.ratel.shop.mall.dto.ShoppingCartItemDto;
 import com.ratel.shop.mall.entity.ShoppingCartItem;
 
 import java.util.List;
@@ -9,12 +9,16 @@ import java.util.List;
 public interface ShoppingCartService {
 
     /**
-     * 保存商品至购物车中
-     *
-     * @param newBeeMallShoppingCartItem
-     * @return
+     * 保存商品至购物车
      */
-    String saveNewBeeMallCartItem(ShoppingCartItem newBeeMallShoppingCartItem);
+    String saveShoppingCartItem(ShoppingCartItem shoppingCartItem);
+
+    /**
+     * 购物车中的列表数据
+     */
+    List<ShoppingCartItemDto> queryMyShoppingCartItemList(Long userId);
+
+
 
     /**
      * 修改购物车中的属性
@@ -22,7 +26,7 @@ public interface ShoppingCartService {
      * @param newBeeMallShoppingCartItem
      * @return
      */
-    String updateNewBeeMallCartItem(ShoppingCartItem newBeeMallShoppingCartItem);
+    String updateShoppingCartItem(ShoppingCartItem newBeeMallShoppingCartItem);
 
     /**
      * 获取购物项详情
@@ -40,11 +44,5 @@ public interface ShoppingCartService {
      */
     Boolean deleteById(Long newBeeMallShoppingCartItemId);
 
-    /**
-     * 获取我的购物车中的列表数据
-     *
-     * @param newBeeMallUserId
-     * @return
-     */
-    List<ShoppingCartItemDto> getMyShoppingCartItems(Long newBeeMallUserId);
+
 }

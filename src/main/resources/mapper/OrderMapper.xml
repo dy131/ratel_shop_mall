@@ -2,24 +2,74 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ratel.shop.mall.mapper.OrderMapper">
     <resultMap id="BaseResultMap" type="com.ratel.shop.mall.entity.Order">
-        <id column="order_id" jdbcType="BIGINT" property="orderId"/>
-        <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
-        <result column="user_id" jdbcType="BIGINT" property="userId"/>
-        <result column="total_price" jdbcType="INTEGER" property="totalPrice"/>
-        <result column="pay_status" jdbcType="TINYINT" property="payStatus"/>
-        <result column="pay_type" jdbcType="TINYINT" property="payType"/>
-        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime"/>
-        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
-        <result column="extra_info" jdbcType="VARCHAR" property="extraInfo"/>
-        <result column="user_address" jdbcType="VARCHAR" property="userAddress"/>
-        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
+
     <sql id="Base_Column_List">
-    order_id, order_no, user_id, total_price, pay_status, pay_type, pay_time, order_status,
-    extra_info, user_name, user_phone, user_address, is_deleted, create_time, update_time
-  </sql>
+        order_id, order_no, user_id, total_price, pay_status, pay_type, pay_time, order_status,
+        extra_info, user_name, user_phone, user_address, is_deleted, create_time, update_time
+    </sql>
+
+    <select id="queryTotalOrdersPageList" parameterType="Map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tb_ratel_order
+        <where>
+            <if test="orderNo!=null and orderNo!=''">
+                AND order_no = #{orderNo}
+            </if>
+            <if test="userId!=null and userId!=''">
+                AND user_id = #{userId}
+            </if>
+            <if test="payType!=null and payType!=''">
+                AND pay_type = #{payType}
+            </if>
+            <if test="orderStatus!=null and orderStatus!=''">
+                AND order_status = #{orderStatus}
+            </if>
+            <if test="isDeleted!=null and isDeleted!=''">
+                AND is_deleted = #{isDeleted}
+            </if>
+            <if test="startTime != null and startTime.trim() != ''">
+                AND create_time &gt; #{startTime}
+            </if>
+            <if test="endTime != null and endTime.trim() != ''">
+                AND create_time &lt; #{endTime}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        <if test="start!=null and limit!=null">
+            LIMIT #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="queryTotalOrdersCount" parameterType="Map" resultType="int">
+        SELECT COUNT(*) FROM tb_ratel_order
+        <where>
+            <if test="orderNo!=null and orderNo!=''">
+                AND order_no = #{orderNo}
+            </if>
+            <if test="userId!=null and userId!=''">
+                AND user_id = #{userId}
+            </if>
+            <if test="payType!=null and payType!=''">
+                AND pay_type = #{payType}
+            </if>
+            <if test="orderStatus!=null and orderStatus!=''">
+                AND order_status = #{orderStatus}
+            </if>
+            <if test="isDeleted!=null and isDeleted!=''">
+                AND is_deleted = #{isDeleted}
+            </if>
+            <if test="startTime != null and startTime.trim() != ''">
+                AND create_time &gt; #{startTime}
+            </if>
+            <if test="endTime != null and endTime.trim() != ''">
+                AND create_time &lt; #{endTime}
+            </if>
+        </where>
+    </select>
+
+
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -36,65 +86,9 @@
                  open="(" separator="," close=")">#{item}
         </foreach>
     </select>
-    <select id="findNewBeeMallOrderList" parameterType="Map" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from tb_newbee_mall_order
-        <where>
-            <if test="orderNo!=null and orderNo!=''">
-                and order_no = #{orderNo}
-            </if>
-            <if test="userId!=null and userId!=''">
-                and user_id = #{userId}
-            </if>
-            <if test="payType!=null and payType!=''">
-                and pay_type = #{payType}
-            </if>
-            <if test="orderStatus!=null and orderStatus!=''">
-                and order_status = #{orderStatus}
-            </if>
-            <if test="isDeleted!=null and isDeleted!=''">
-                and is_deleted = #{isDeleted}
-            </if>
-            <if test="startTime != null and startTime.trim() != ''">
-                and create_time &gt; #{startTime}
-            </if>
-            <if test="endTime != null and endTime.trim() != ''">
-                and create_time &lt; #{endTime}
-            </if>
-        </where>
-        order by create_time desc
-        <if test="start!=null and limit!=null">
-            limit #{start},#{limit}
-        </if>
-    </select>
 
-    <select id="getTotalNewBeeMallOrders" parameterType="Map" resultType="int">
-        select count(*) from tb_newbee_mall_order
-        <where>
-            <if test="orderNo!=null and orderNo!=''">
-                and order_no = #{orderNo}
-            </if>
-            <if test="userId!=null and userId!=''">
-                and user_id = #{userId}
-            </if>
-            <if test="payType!=null and payType!=''">
-                and pay_type = #{payType}
-            </if>
-            <if test="orderStatus!=null and orderStatus!=''">
-                and order_status = #{orderStatus}
-            </if>
-            <if test="isDeleted!=null and isDeleted!=''">
-                and is_deleted = #{isDeleted}
-            </if>
-            <if test="startTime != null and startTime.trim() != ''">
-                and create_time &gt; #{startTime}
-            </if>
-            <if test="endTime != null and endTime.trim() != ''">
-                and create_time &lt; #{endTime}
-            </if>
-        </where>
-    </select>
+
+
     <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
     update tb_newbee_mall_order set is_deleted=1
     where order_id = #{orderId,jdbcType=BIGINT} and is_deleted=0

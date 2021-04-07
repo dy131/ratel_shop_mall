@@ -2,7 +2,7 @@
 package com.ratel.shop.mall.controller.admin;
 
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.controller.dto.OrderItemDto;
+import com.ratel.shop.mall.dto.OrderItemDto;
 import com.ratel.shop.mall.entity.Order;
 import com.ratel.shop.mall.service.OrderService;
 import com.ratel.shop.mall.util.PageQueryUtil;

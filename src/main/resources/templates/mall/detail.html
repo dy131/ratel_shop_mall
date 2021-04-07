@@ -1,7 +1,7 @@
-<!-- Copyright (c) 2019-2020 十三 all rights reserved. -->
+<!-- Copyright (c) 2021-2022 all rights reserved. -->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="mall/header::head-fragment('NewBee商城-商品详情','detail')">
+<head th:replace="mall/header::head-fragment('Ratel商城-商品详情','detail')">
 </head>
 <body>
 <header th:replace="mall/header::header-fragment"></header>
@@ -20,22 +20,22 @@
     <div class="intro mt20 w clearfix">
         <div class="left fl" style="position: relative;">
             <div class="swiper-container fl">
-                <img th:src="@{${goodsDetail.goodsCoverImg}}">
+                <img th:src="@{${goodsDetailDto.goodsCoverImg}}">
             </div>
         </div>
         <div class="right fr">
-            <div class="h3 ml20 mt20" th:text="${goodsDetail.goodsName}">NewBeeMall</div>
-            <div class="sub_title mr40 ml20 mt10" th:text="${goodsDetail.goodsIntro}">NewBeeMall</div>
+            <div class="h3 ml20 mt20" th:text="${goodsDetailDto.goodsName}">NewBeeMall</div>
+            <div class="sub_title mr40 ml20 mt10" th:text="${goodsDetailDto.goodsIntro}">NewBeeMall</div>
             <div class="item_price mr40 ml20 mt10">
-                <th:block th:text="${goodsDetail.sellingPrice}+'.00 元'"></th:block>
+                <th:block th:text="${goodsDetailDto.sellingPrice}+'.00 元'"></th:block>
                 <del>
-                    <th:block th:text="${goodsDetail.originalPrice}+'.00 元'"></th:block>
+                    <th:block th:text="${goodsDetailDto.originalPrice}+'.00 元'"></th:block>
                 </del>
             </div>
 
             <div class="order">
-                <input class="car" type="button" th:onclick="'saveAndGoCart('+${goodsDetail.goodsId}+')'" value="立即选购"/>
-                <input class="car" type="button" th:onclick="'saveToCart('+${goodsDetail.goodsId}+')'" value="加入购物车"/>
+                <input class="car" type="button" th:onclick="'saveAndGoCart('+${goodsDetailDto.goodsId}+')'" value="立即选购"/>
+                <input class="car" type="button" th:onclick="'saveToCart('+${goodsDetailDto.goodsId}+')'" value="加入购物车"/>
             </div>
             <div class="tb-extra ml20" id="J_tbExtra">
                 <dl>
@@ -45,10 +45,10 @@
                 </dl>
                 <dl>
                     <dt>支付</dt>
-                    <dd><a href="##" target="_blank"><img th:src="@{/mall/image/hua.png}">蚂蚁花呗</a><a href="##"
+                    <dd><a href="##" target="_blank"><img th:src="@{/mall/image/hua.png}">支付宝</a><a href="##"
                                                                                                      target="_blank"><img
-                            th:src="@{/mall/image/card.png}">信用卡支付</a><a href="##" target="_blank"><img
-                            th:src="@{/mall/image/ji.png}">集分宝</a></dd>
+                            th:src="@{/mall/image/card.png}">微信支付</a><a href="##" target="_blank"><img
+                            th:src="@{/mall/image/ji.png}">银行卡支付</a></dd>
                 </dl>
                 <dl>
                     <dt>支持</dt>
@@ -60,7 +60,7 @@
         <div class="clear"></div>
     </div>
     <!-- 这里使用的是 th:utext 标签，用 th:text 不会解析 html，用 th:utext 会解析 html -->
-    <div class="goods mt20 w clearfix" th:utext="${goodsDetail.goodsDetailContent}">
+    <div class="goods mt20 w clearfix" th:utext="${goodsDetailDto.goodsDetailContent}">
     </div>
 </div>
 

@@ -3,9 +3,9 @@ package com.ratel.shop.mall.controller.mall;
 
 import com.ratel.shop.mall.common.Constants;
 import com.ratel.shop.mall.common.IndexConfigTypeEnum;
-import com.ratel.shop.mall.controller.dto.IndexCarouselDto;
-import com.ratel.shop.mall.controller.dto.IndexCategoryDto;
-import com.ratel.shop.mall.controller.dto.IndexConfigGoodsDto;
+import com.ratel.shop.mall.dto.IndexCarouselDto;
+import com.ratel.shop.mall.dto.IndexCategoryDto;
+import com.ratel.shop.mall.dto.IndexConfigGoodsDto;
 import com.ratel.shop.mall.service.CarouselService;
 import com.ratel.shop.mall.service.CategoryService;
 import com.ratel.shop.mall.service.IndexConfigService;
@@ -56,6 +56,8 @@ public class IndexController {
                 Constants.INDEX_GOODS_RECOMMOND_NUMBER);
         // 推荐商品
         request.setAttribute("recommendGoods", recommendGoods);
+
+        request.setAttribute("path", "index");
         return "mall/index";
     }
 }

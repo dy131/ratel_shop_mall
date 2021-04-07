@@ -9,19 +9,23 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface UserMapper extends BaseMapper<User> {
+
+    User queryUserByLoginNameAndPassword(@Param("loginName") String loginName, @Param("password") String password);
+
+    User queryUserByLoginName(String loginName);
+
+    User queryUserByUserId(Long userId);
+
+    int updateUserByUserId(User user);
+
+
     int deleteByPrimaryKey(Long userId);
 
-    int insert(User record);
 
-    int insertSelective(User record);
 
-    User selectByPrimaryKey(Long userId);
 
-    User selectByLoginName(String loginName);
 
-    User selectByLoginNameAndPasswd(@Param("loginName") String loginName, @Param("password") String password);
 
-    int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
 

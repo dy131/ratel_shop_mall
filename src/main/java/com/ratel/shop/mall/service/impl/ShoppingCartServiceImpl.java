@@ -1,19 +1,19 @@
 
 package com.ratel.shop.mall.service.impl;
 
-import com.ratel.shop.mall.controller.dto.ShoppingCartItemDto;
-import com.ratel.shop.mall.mapper.ShoppingCartItemMapper;
 import com.ratel.shop.mall.common.Constants;
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.mapper.GoodsMapper;
+import com.ratel.shop.mall.dto.ShoppingCartItemDto;
 import com.ratel.shop.mall.entity.Goods;
 import com.ratel.shop.mall.entity.ShoppingCartItem;
+import com.ratel.shop.mall.mapper.GoodsMapper;
+import com.ratel.shop.mall.mapper.ShoppingCartItemMapper;
 import com.ratel.shop.mall.service.ShoppingCartService;
 import com.ratel.shop.mall.util.BeanUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,105 +21,105 @@ import java.util.stream.Collectors;
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
-    @Autowired
-    private ShoppingCartItemMapper newBeeMallShoppingCartItemMapper;
+    @Resource
+    private ShoppingCartItemMapper shoppingCartItemMapper;
 
-    @Autowired
-    private GoodsMapper newBeeMallGoodsMapper;
-
-    //todo 修改session中购物项数量
+    @Resource
+    private GoodsMapper goodsMapper;
 
     @Override
-    public String saveNewBeeMallCartItem(ShoppingCartItem newBeeMallShoppingCartItem) {
-        ShoppingCartItem temp = newBeeMallShoppingCartItemMapper.selectByUserIdAndGoodsId(newBeeMallShoppingCartItem.getUserId(), newBeeMallShoppingCartItem.getGoodsId());
-        if (temp != null) {
-            //已存在则修改该记录
-            //todo count = tempCount + 1
-            temp.setGoodsCount(newBeeMallShoppingCartItem.getGoodsCount());
-            return updateNewBeeMallCartItem(temp);
+    public String saveShoppingCartItem(ShoppingCartItem shoppingCartItem) {
+        ShoppingCartItem shoppingCartItem1 = shoppingCartItemMapper.queryShoppingCartByUserIdAndGoodsId(shoppingCartItem.getUserId(), shoppingCartItem.getGoodsId());
+        if (shoppingCartItem1 != null) {
+            shoppingCartItem1.setGoodsCount(shoppingCartItem.getGoodsCount());
+            return updateShoppingCartItem(shoppingCartItem1);
         }
-        Goods newBeeMallGoods = newBeeMallGoodsMapper.selectByPrimaryKey(newBeeMallShoppingCartItem.getGoodsId());
-        //商品为空
-        if (newBeeMallGoods == null) {
+        Goods goods = goodsMapper.queryGoodsByGoodId(shoppingCartItem.getGoodsId());
+        if (goods == null) {
             return ServiceResultEnum.GOODS_NOT_EXIST.getResult();
         }
-        int totalItem = newBeeMallShoppingCartItemMapper.selectCountByUserId(newBeeMallShoppingCartItem.getUserId()) + 1;
-        //超出单个商品的最大数量
-        if (newBeeMallShoppingCartItem.getGoodsCount() > Constants.SHOPPING_CART_ITEM_LIMIT_NUMBER) {
+        int totalItem = shoppingCartItemMapper.queryShoppingCartNumsByUserId(shoppingCartItem.getUserId()) + 1;
+        // 超出单个商品的最大数量
+        if (shoppingCartItem.getGoodsCount() > Constants.SHOPPING_CART_ITEM_LIMIT_NUMBER) {
             return ServiceResultEnum.SHOPPING_CART_ITEM_LIMIT_NUMBER_ERROR.getResult();
         }
-        //超出最大数量
+        // 超出最大数量
         if (totalItem > Constants.SHOPPING_CART_ITEM_TOTAL_NUMBER) {
             return ServiceResultEnum.SHOPPING_CART_ITEM_TOTAL_NUMBER_ERROR.getResult();
         }
-        //保存记录
-        if (newBeeMallShoppingCartItemMapper.insertSelective(newBeeMallShoppingCartItem) > 0) {
+        // 保存记录
+        if (shoppingCartItemMapper.insert(shoppingCartItem) > 0) {
             return ServiceResultEnum.SUCCESS.getResult();
         }
         return ServiceResultEnum.DB_ERROR.getResult();
     }
 
     @Override
-    public String updateNewBeeMallCartItem(ShoppingCartItem newBeeMallShoppingCartItem) {
-        ShoppingCartItem newBeeMallShoppingCartItemUpdate = newBeeMallShoppingCartItemMapper.selectByPrimaryKey(newBeeMallShoppingCartItem.getCartItemId());
-        if (newBeeMallShoppingCartItemUpdate == null) {
+    public String updateShoppingCartItem(ShoppingCartItem shoppingCartItem) {
+        ShoppingCartItem shoppingCartItem1 = shoppingCartItemMapper.queryShoppingCartByCartItemId(shoppingCartItem.getCartItemId());
+        if (shoppingCartItem1 == null) {
             return ServiceResultEnum.DATA_NOT_EXIST.getResult();
         }
-        //超出单个商品的最大数量
-        if (newBeeMallShoppingCartItem.getGoodsCount() > Constants.SHOPPING_CART_ITEM_LIMIT_NUMBER) {
+        // 超出单个商品的最大数量
+        if (shoppingCartItem.getGoodsCount() > Constants.SHOPPING_CART_ITEM_LIMIT_NUMBER) {
             return ServiceResultEnum.SHOPPING_CART_ITEM_LIMIT_NUMBER_ERROR.getResult();
         }
-        //todo 数量相同不会进行修改
-        //todo userId不同不能修改
-        newBeeMallShoppingCartItemUpdate.setGoodsCount(newBeeMallShoppingCartItem.getGoodsCount());
-        newBeeMallShoppingCartItemUpdate.setUpdateTime(new Date());
-        //修改记录
-        if (newBeeMallShoppingCartItemMapper.updateByPrimaryKeySelective(newBeeMallShoppingCartItemUpdate) > 0) {
+        shoppingCartItem1.setGoodsCount(shoppingCartItem.getGoodsCount());
+        shoppingCartItem1.setUpdateTime(new Date());
+        // 修改记录
+        if (shoppingCartItemMapper.updateShoppingCartByCartItemId(shoppingCartItem1) > 0) {
             return ServiceResultEnum.SUCCESS.getResult();
         }
         return ServiceResultEnum.DB_ERROR.getResult();
     }
+
+    @Override
+    public List<ShoppingCartItemDto> queryMyShoppingCartItemList(Long userId) {
+        List<ShoppingCartItemDto> shoppingCartItemDtoList = new ArrayList<>();
+        List<ShoppingCartItem> shoppingCartItemList = shoppingCartItemMapper.queryShoppingCartItemByUserId(userId, Constants.SHOPPING_CART_ITEM_TOTAL_NUMBER);
+        if (CollectionUtils.isEmpty(shoppingCartItemList)) {
+            return shoppingCartItemDtoList;
+        }
+        //查询商品信息并做数据转换
+        List<Long> goodIds = shoppingCartItemList.stream().map(ShoppingCartItem::getGoodsId).collect(Collectors.toList());
+        List<Goods> goods = goodsMapper.queryGoodsByGoodIds(goodIds);
+        Map<Long, Goods> goodsMap = new HashMap<>();
+        if (!CollectionUtils.isEmpty(goods)) {
+            goodsMap = goods.stream().collect(Collectors.toMap(Goods::getGoodsId, Function.identity(), (entity1, entity2) -> entity1));
+        }
+        for (ShoppingCartItem shoppingCartItem : shoppingCartItemList) {
+            ShoppingCartItemDto shoppingCartItemDto = new ShoppingCartItemDto();
+            BeanUtil.copyProperties(shoppingCartItem, shoppingCartItemDto);
+            if (goodsMap.containsKey(shoppingCartItem.getGoodsId())) {
+                Goods good = goodsMap.get(shoppingCartItem.getGoodsId());
+                shoppingCartItemDto.setGoodsCoverImg(good.getGoodsCoverImg());
+                String goodsName = good.getGoodsName();
+                if (goodsName.length() > 28) {
+                    goodsName = goodsName.substring(0, 28) + "...";
+                }
+                shoppingCartItemDto.setGoodsName(goodsName);
+                shoppingCartItemDto.setSellingPrice(good.getSellingPrice());
+                shoppingCartItemDtoList.add(shoppingCartItemDto);
+            }
+        }
+
+        return shoppingCartItemDtoList;
+    }
+
+
+
+
 
     @Override
     public ShoppingCartItem getNewBeeMallCartItemById(Long newBeeMallShoppingCartItemId) {
-        return newBeeMallShoppingCartItemMapper.selectByPrimaryKey(newBeeMallShoppingCartItemId);
+        return shoppingCartItemMapper.queryShoppingCartByCartItemId(newBeeMallShoppingCartItemId);
     }
 
     @Override
     public Boolean deleteById(Long newBeeMallShoppingCartItemId) {
         //todo userId不同不能删除
-        return newBeeMallShoppingCartItemMapper.deleteByPrimaryKey(newBeeMallShoppingCartItemId) > 0;
+        return shoppingCartItemMapper.deleteByPrimaryKey(newBeeMallShoppingCartItemId) > 0;
     }
 
-    @Override
-    public List<ShoppingCartItemDto> getMyShoppingCartItems(Long newBeeMallUserId) {
-        List<ShoppingCartItemDto> newBeeMallShoppingCartItemVOS = new ArrayList<>();
-        List<ShoppingCartItem> newBeeMallShoppingCartItems = newBeeMallShoppingCartItemMapper.selectByUserId(newBeeMallUserId, Constants.SHOPPING_CART_ITEM_TOTAL_NUMBER);
-        if (!CollectionUtils.isEmpty(newBeeMallShoppingCartItems)) {
-            //查询商品信息并做数据转换
-            List<Long> newBeeMallGoodsIds = newBeeMallShoppingCartItems.stream().map(ShoppingCartItem::getGoodsId).collect(Collectors.toList());
-            List<Goods> newBeeMallGoods = newBeeMallGoodsMapper.selectByPrimaryKeys(newBeeMallGoodsIds);
-            Map<Long, Goods> newBeeMallGoodsMap = new HashMap<>();
-            if (!CollectionUtils.isEmpty(newBeeMallGoods)) {
-                newBeeMallGoodsMap = newBeeMallGoods.stream().collect(Collectors.toMap(Goods::getGoodsId, Function.identity(), (entity1, entity2) -> entity1));
-            }
-            for (ShoppingCartItem newBeeMallShoppingCartItem : newBeeMallShoppingCartItems) {
-                ShoppingCartItemDto newBeeMallShoppingCartItemVO = new ShoppingCartItemDto();
-                BeanUtil.copyProperties(newBeeMallShoppingCartItem, newBeeMallShoppingCartItemVO);
-                if (newBeeMallGoodsMap.containsKey(newBeeMallShoppingCartItem.getGoodsId())) {
-                    Goods newBeeMallGoodsTemp = newBeeMallGoodsMap.get(newBeeMallShoppingCartItem.getGoodsId());
-                    newBeeMallShoppingCartItemVO.setGoodsCoverImg(newBeeMallGoodsTemp.getGoodsCoverImg());
-                    String goodsName = newBeeMallGoodsTemp.getGoodsName();
-                    // 字符串过长导致文字超出的问题
-                    if (goodsName.length() > 28) {
-                        goodsName = goodsName.substring(0, 28) + "...";
-                    }
-                    newBeeMallShoppingCartItemVO.setGoodsName(goodsName);
-                    newBeeMallShoppingCartItemVO.setSellingPrice(newBeeMallGoodsTemp.getSellingPrice());
-                    newBeeMallShoppingCartItemVOS.add(newBeeMallShoppingCartItemVO);
-                }
-            }
-        }
-        return newBeeMallShoppingCartItemVOS;
-    }
+
 }

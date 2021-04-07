@@ -1,16 +1,16 @@
 
 package com.ratel.shop.mall.controller.mall;
 
+import cn.hutool.core.util.StrUtil;
 import com.ratel.shop.mall.common.Constants;
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.controller.dto.UserDto;
+import com.ratel.shop.mall.dto.UserDto;
 import com.ratel.shop.mall.entity.User;
 import com.ratel.shop.mall.service.UserService;
 import com.ratel.shop.mall.util.MD5Util;
 import com.ratel.shop.mall.util.Result;
 import com.ratel.shop.mall.util.ResultGenerator;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpSession;
 public class PersonalController {
 
     @Resource
-    private UserService newBeeMallUserService;
+    private UserService userService;
 
     @GetMapping("/personal")
     public String personalPage(HttpServletRequest request,
@@ -46,37 +46,31 @@ public class PersonalController {
         return "mall/register";
     }
 
-    @GetMapping("/personal/addresses")
-    public String addressesPage() {
-        return "mall/addresses";
-    }
-
     @PostMapping("/login")
     @ResponseBody
     public Result login(@RequestParam("loginName") String loginName,
                         @RequestParam("verifyCode") String verifyCode,
                         @RequestParam("password") String password,
                         HttpSession httpSession) {
-        if (StringUtils.isEmpty(loginName)) {
+        if (StrUtil.isBlank(loginName)) {
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_NAME_NULL.getResult());
         }
-        if (StringUtils.isEmpty(password)) {
+        if (StrUtil.isBlank(password)) {
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_PASSWORD_NULL.getResult());
         }
-        if (StringUtils.isEmpty(verifyCode)) {
+        if (StrUtil.isBlank(verifyCode)) {
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_VERIFY_CODE_NULL.getResult());
         }
         String kaptchaCode = httpSession.getAttribute(Constants.MALL_VERIFY_CODE_KEY) + "";
-        if (StringUtils.isEmpty(kaptchaCode) || !verifyCode.toLowerCase().equals(kaptchaCode)) {
+        if (StrUtil.isBlank(kaptchaCode) || !verifyCode.toLowerCase().equals(kaptchaCode)) {
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_VERIFY_CODE_ERROR.getResult());
         }
-        //todo 清verifyCode
-        String loginResult = newBeeMallUserService.login(loginName, MD5Util.MD5Encode(password, "UTF-8"), httpSession);
-        //登录成功
+        String loginResult = userService.login(loginName, MD5Util.MD5Encode(password, "UTF-8"), httpSession);
+        // 登录成功
         if (ServiceResultEnum.SUCCESS.getResult().equals(loginResult)) {
             return ResultGenerator.genSuccessResult();
         }
-        //登录失败
+        // 登录失败
         return ResultGenerator.genFailResult(loginResult);
     }
 
@@ -86,40 +80,39 @@ public class PersonalController {
                            @RequestParam("verifyCode") String verifyCode,
                            @RequestParam("password") String password,
                            HttpSession httpSession) {
-        if (StringUtils.isEmpty(loginName)) {
+        if (StrUtil.isBlank(loginName)) {
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_NAME_NULL.getResult());
         }
-        if (StringUtils.isEmpty(password)) {
+        if (StrUtil.isBlank(password)) {
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_PASSWORD_NULL.getResult());
         }
-        if (StringUtils.isEmpty(verifyCode)) {
+        if (StrUtil.isBlank(verifyCode)) {
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_VERIFY_CODE_NULL.getResult());
         }
         String kaptchaCode = httpSession.getAttribute(Constants.MALL_VERIFY_CODE_KEY) + "";
-        if (StringUtils.isEmpty(kaptchaCode) || !verifyCode.toLowerCase().equals(kaptchaCode)) {
+        if (StrUtil.isBlank(kaptchaCode) || !verifyCode.toLowerCase().equals(kaptchaCode)) {
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_VERIFY_CODE_ERROR.getResult());
         }
-        //todo 清verifyCode
-        String registerResult = newBeeMallUserService.register(loginName, password);
-        //注册成功
+        String registerResult = userService.register(loginName, password);
+        // 注册成功
         if (ServiceResultEnum.SUCCESS.getResult().equals(registerResult)) {
             return ResultGenerator.genSuccessResult();
         }
-        //注册失败
+        // 注册失败
         return ResultGenerator.genFailResult(registerResult);
     }
 
-    @PostMapping("/personal/updateInfo")
+    @PostMapping("/personal/update")
     @ResponseBody
-    public Result updateInfo(@RequestBody User mallUser, HttpSession httpSession) {
-        UserDto mallUserTemp = newBeeMallUserService.updateUserInfo(mallUser,httpSession);
-        if (mallUserTemp == null) {
-            Result result = ResultGenerator.genFailResult("修改失败");
+    public Result update(@RequestBody User user, HttpSession httpSession) {
+        UserDto userDto = userService.update(user, httpSession);
+        Result result;
+        if (userDto == null) {
+            result = ResultGenerator.genFailResult("修改失败");
             return result;
         } else {
-            //返回成功
-            Result result = ResultGenerator.genSuccessResult();
-            return result;
+            result = ResultGenerator.genSuccessResult();
         }
+        return result;
     }
 }

@@ -1,8 +1,9 @@
 
 package com.ratel.shop.mall.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.controller.dto.IndexConfigGoodsDto;
+import com.ratel.shop.mall.dto.IndexConfigGoodsDto;
 import com.ratel.shop.mall.entity.Goods;
 import com.ratel.shop.mall.entity.IndexConfig;
 import com.ratel.shop.mall.mapper.GoodsMapper;
@@ -11,6 +12,7 @@ import com.ratel.shop.mall.service.IndexConfigService;
 import com.ratel.shop.mall.util.BeanUtil;
 import com.ratel.shop.mall.util.PageQueryUtil;
 import com.ratel.shop.mall.util.PageResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class IndexConfigServiceImpl implements IndexConfigService {
 
     @Resource
@@ -35,8 +38,8 @@ public class IndexConfigServiceImpl implements IndexConfigService {
         if (CollectionUtils.isEmpty(indexConfigList)) {
             return indexConfigGoodsDtoList;
         }
-        // 所有的goodsId
         List<Long> goodsIds = indexConfigList.stream().map(IndexConfig::getGoodsId).collect(Collectors.toList());
+        log.info(">>>:{}", JSONUtil.toJsonStr(goodsIds));
         List<Goods> goodList = goodsMapper.queryGoodsByGoodIds(goodsIds);
         indexConfigGoodsDtoList = BeanUtil.copyList(goodList, IndexConfigGoodsDto.class);
         for (IndexConfigGoodsDto indexConfigGoodsDto : indexConfigGoodsDtoList) {

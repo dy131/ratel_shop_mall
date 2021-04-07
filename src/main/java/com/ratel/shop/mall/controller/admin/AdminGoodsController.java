@@ -1,11 +1,11 @@
 
 package com.ratel.shop.mall.controller.admin;
 
-import com.ratel.shop.mall.common.Constants;
 import com.ratel.shop.mall.common.CategoryLevelEnum;
+import com.ratel.shop.mall.common.Constants;
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.entity.GoodsCategory;
 import com.ratel.shop.mall.entity.Goods;
+import com.ratel.shop.mall.entity.GoodsCategory;
 import com.ratel.shop.mall.service.CategoryService;
 import com.ratel.shop.mall.service.GoodsService;
 import com.ratel.shop.mall.util.PageQueryUtil;
@@ -63,7 +63,7 @@ public class AdminGoodsController {
     @GetMapping("/goods/edit/{goodsId}")
     public String edit(HttpServletRequest request, @PathVariable("goodsId") Long goodsId) {
         request.setAttribute("path", "edit");
-        Goods newBeeMallGoods = newBeeMallGoodsService.getNewBeeMallGoodsById(goodsId);
+        Goods newBeeMallGoods = newBeeMallGoodsService.queryGoodByGoodId(goodsId);
         if (newBeeMallGoods == null) {
             return "error/error_400";
         }
@@ -190,7 +190,7 @@ public class AdminGoodsController {
     @GetMapping("/goods/info/{id}")
     @ResponseBody
     public Result info(@PathVariable("id") Long id) {
-        Goods goods = newBeeMallGoodsService.getNewBeeMallGoodsById(id);
+        Goods goods = newBeeMallGoodsService.queryGoodByGoodId(id);
         if (goods == null) {
             return ResultGenerator.genFailResult(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }

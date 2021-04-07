@@ -47,7 +47,7 @@ public class AdminGoodsCategoryController {
             return ResultGenerator.genFailResult("参数异常！");
         }
         PageQueryUtil pageUtil = new PageQueryUtil(params);
-        return ResultGenerator.genSuccessResult(newBeeMallCategoryService.getCategorisPage(pageUtil));
+        return ResultGenerator.genSuccessResult(newBeeMallCategoryService.getCategoryPage(pageUtil));
     }
 
     /**

@@ -1,5 +1,5 @@
 
-package com.ratel.shop.mall.controller.dto;
+package com.ratel.shop.mall.dto;
 
 import com.ratel.shop.mall.entity.GoodsCategory;
 import lombok.Data;

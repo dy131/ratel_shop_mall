@@ -2,7 +2,7 @@
 package com.ratel.shop.mall.service.impl;
 
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.controller.dto.IndexCarouselDto;
+import com.ratel.shop.mall.dto.IndexCarouselDto;
 import com.ratel.shop.mall.entity.Carousel;
 import com.ratel.shop.mall.mapper.CarouselMapper;
 import com.ratel.shop.mall.service.CarouselService;

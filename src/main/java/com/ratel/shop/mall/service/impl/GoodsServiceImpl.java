@@ -2,7 +2,7 @@
 package com.ratel.shop.mall.service.impl;
 
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.controller.dto.SearchGoodsDto;
+import com.ratel.shop.mall.dto.SearchGoodsDto;
 import com.ratel.shop.mall.entity.Goods;
 import com.ratel.shop.mall.mapper.GoodsMapper;
 import com.ratel.shop.mall.service.GoodsService;
@@ -74,7 +74,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public String updateNewBeeMallGoods(Goods goods) {
-        Goods temp = goodsMapper.selectByPrimaryKey(goods.getGoodsId());
+        Goods temp = goodsMapper.selectById(goods.getGoodsId());
         if (temp == null) {
             return ServiceResultEnum.DATA_NOT_EXIST.getResult();
         }

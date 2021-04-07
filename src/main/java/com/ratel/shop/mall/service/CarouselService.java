@@ -1,7 +1,7 @@
 
 package com.ratel.shop.mall.service;
 
-import com.ratel.shop.mall.controller.dto.IndexCarouselDto;
+import com.ratel.shop.mall.dto.IndexCarouselDto;
 import com.ratel.shop.mall.entity.Carousel;
 import com.ratel.shop.mall.util.PageQueryUtil;
 import com.ratel.shop.mall.util.PageResult;

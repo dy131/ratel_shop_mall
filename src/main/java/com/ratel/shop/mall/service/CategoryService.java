@@ -1,8 +1,8 @@
 
 package com.ratel.shop.mall.service;
 
-import com.ratel.shop.mall.controller.dto.IndexCategoryDto;
-import com.ratel.shop.mall.controller.dto.SearchPageCategoryDto;
+import com.ratel.shop.mall.dto.IndexCategoryDto;
+import com.ratel.shop.mall.dto.SearchPageCategoryDto;
 import com.ratel.shop.mall.entity.GoodsCategory;
 import com.ratel.shop.mall.util.PageQueryUtil;
 import com.ratel.shop.mall.util.PageResult;
@@ -30,7 +30,6 @@ public interface CategoryService {
     GoodsCategory getGoodsCategoryById(Long id);
 
     Boolean deleteBatch(Integer[] ids);
-
 
 
     /**

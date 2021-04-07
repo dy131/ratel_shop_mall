@@ -3,8 +3,8 @@ package com.ratel.shop.mall.controller.mall;
 
 import com.ratel.shop.mall.common.Constants;
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.controller.vo.ShoppingCartItemVO;
-import com.ratel.shop.mall.controller.vo.NewBeeMallUserVO;
+import com.ratel.shop.mall.dto.ShoppingCartItemDto;
+import com.ratel.shop.mall.dto.UserDto;
 import com.ratel.shop.mall.entity.ShoppingCartItem;
 import com.ratel.shop.mall.service.ShoppingCartService;
 import com.ratel.shop.mall.util.Result;
@@ -22,23 +22,23 @@ import java.util.List;
 public class ShoppingCartController {
 
     @Resource
-    private ShoppingCartService newBeeMallShoppingCartService;
+    private ShoppingCartService shoppingCartService;
 
     @GetMapping("/shop-cart")
     public String cartListPage(HttpServletRequest request,
                                HttpSession httpSession) {
-        NewBeeMallUserVO user = (NewBeeMallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
+        UserDto user = (UserDto) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
         int itemsTotal = 0;
         int priceTotal = 0;
-        List<ShoppingCartItemVO> myShoppingCartItems = newBeeMallShoppingCartService.getMyShoppingCartItems(user.getUserId());
+        List<ShoppingCartItemDto> myShoppingCartItems = shoppingCartService.queryMyShoppingCartItemList(user.getUserId());
         if (!CollectionUtils.isEmpty(myShoppingCartItems)) {
-            //购物项总数
-            itemsTotal = myShoppingCartItems.stream().mapToInt(ShoppingCartItemVO::getGoodsCount).sum();
+            // 购物项总数
+            itemsTotal = myShoppingCartItems.stream().mapToInt(ShoppingCartItemDto::getGoodsCount).sum();
             if (itemsTotal < 1) {
                 return "error/error_5xx";
             }
-            //总价
-            for (ShoppingCartItemVO newBeeMallShoppingCartItemVO : myShoppingCartItems) {
+            // 总价
+            for (ShoppingCartItemDto newBeeMallShoppingCartItemVO : myShoppingCartItems) {
                 priceTotal += newBeeMallShoppingCartItemVO.getGoodsCount() * newBeeMallShoppingCartItemVO.getSellingPrice();
             }
             if (priceTotal < 1) {
@@ -53,13 +53,12 @@ public class ShoppingCartController {
 
     @PostMapping("/shop-cart")
     @ResponseBody
-    public Result saveNewBeeMallShoppingCartItem(@RequestBody ShoppingCartItem newBeeMallShoppingCartItem,
+    public Result saveShoppingCartItem(@RequestBody ShoppingCartItem shoppingCartItem,
                                                  HttpSession httpSession) {
-        NewBeeMallUserVO user = (NewBeeMallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
-        newBeeMallShoppingCartItem.setUserId(user.getUserId());
-        //todo 判断数量
-        String saveResult = newBeeMallShoppingCartService.saveNewBeeMallCartItem(newBeeMallShoppingCartItem);
-        //添加成功
+        UserDto user = (UserDto) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
+        shoppingCartItem.setUserId(user.getUserId());
+        String saveResult = shoppingCartService.saveShoppingCartItem(shoppingCartItem);
+        // 添加成功
         if (ServiceResultEnum.SUCCESS.getResult().equals(saveResult)) {
             return ResultGenerator.genSuccessResult();
         }
@@ -71,10 +70,10 @@ public class ShoppingCartController {
     @ResponseBody
     public Result updateNewBeeMallShoppingCartItem(@RequestBody ShoppingCartItem newBeeMallShoppingCartItem,
                                                    HttpSession httpSession) {
-        NewBeeMallUserVO user = (NewBeeMallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
+        UserDto user = (UserDto) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
         newBeeMallShoppingCartItem.setUserId(user.getUserId());
         //todo 判断数量
-        String updateResult = newBeeMallShoppingCartService.updateNewBeeMallCartItem(newBeeMallShoppingCartItem);
+        String updateResult = shoppingCartService.updateShoppingCartItem(newBeeMallShoppingCartItem);
         //修改成功
         if (ServiceResultEnum.SUCCESS.getResult().equals(updateResult)) {
             return ResultGenerator.genSuccessResult();
@@ -87,8 +86,8 @@ public class ShoppingCartController {
     @ResponseBody
     public Result updateNewBeeMallShoppingCartItem(@PathVariable("newBeeMallShoppingCartItemId") Long newBeeMallShoppingCartItemId,
                                                    HttpSession httpSession) {
-        NewBeeMallUserVO user = (NewBeeMallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
-        Boolean deleteResult = newBeeMallShoppingCartService.deleteById(newBeeMallShoppingCartItemId);
+        UserDto user = (UserDto) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
+        Boolean deleteResult = shoppingCartService.deleteById(newBeeMallShoppingCartItemId);
         //删除成功
         if (deleteResult) {
             return ResultGenerator.genSuccessResult();
@@ -101,14 +100,14 @@ public class ShoppingCartController {
     public String settlePage(HttpServletRequest request,
                              HttpSession httpSession) {
         int priceTotal = 0;
-        NewBeeMallUserVO user = (NewBeeMallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
-        List<ShoppingCartItemVO> myShoppingCartItems = newBeeMallShoppingCartService.getMyShoppingCartItems(user.getUserId());
+        UserDto user = (UserDto) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
+        List<ShoppingCartItemDto> myShoppingCartItems = shoppingCartService.queryMyShoppingCartItemList(user.getUserId());
         if (CollectionUtils.isEmpty(myShoppingCartItems)) {
             //无数据则不跳转至结算页
             return "/shop-cart";
         } else {
             //总价
-            for (ShoppingCartItemVO newBeeMallShoppingCartItemVO : myShoppingCartItems) {
+            for (ShoppingCartItemDto newBeeMallShoppingCartItemVO : myShoppingCartItems) {
                 priceTotal += newBeeMallShoppingCartItemVO.getGoodsCount() * newBeeMallShoppingCartItemVO.getSellingPrice();
             }
             if (priceTotal < 1) {

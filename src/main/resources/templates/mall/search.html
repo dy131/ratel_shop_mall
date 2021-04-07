@@ -1,7 +1,7 @@
-<!-- Copyright (c) 2019-2020 十三 all rights reserved. -->
+<!-- Copyright (c) 2021-2022 all rights reserved. -->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="mall/header::head-fragment('NewBee商城-搜索','search')">
+<head th:replace="mall/header::head-fragment('Ratel商城-搜索','search')">
 </head>
 <body>
 <header th:replace="mall/header::header-fragment"></header>
@@ -12,23 +12,23 @@
 <div class="classify">
     <div class="category">
         <div class="category_bar">
-            <th:block th:if="${searchPageCategoryVO!=null}">
+            <th:block th:if="${searchPageCategoryDto!=null}">
                 <div class="fm c">
-                    <a href="##" class="qqq" th:text="${searchPageCategoryVO.secondLevelCategoryName}">newbee-mall</a>
+                    <a href="##" class="qqq" th:text="${searchPageCategoryDto.secondLevelCategoryName}">Ratel-mall</a>
                     <div>
-                        <th:block th:each="thirdLevelCategory : ${searchPageCategoryVO.thirdLevelCategoryList}">
-                            <a th:href="@{${'/search?goodsCategoryId='+thirdLevelCategory.categoryId}}"
-                               th:text="${thirdLevelCategory.categoryName}">newbee-mall</a>
+                        <th:block th:each="thirdLevelCategory : ${searchPageCategoryDto.thirdLevelCategoryList}">
+                            <a th:href="@{${'/search?categoryId='+thirdLevelCategory.categoryId}}"
+                               th:text="${thirdLevelCategory.categoryName}">Ratel-mall</a>
                         </th:block>
                     </div>
                 </div>
                 <i><img src="mall/image/right-@1x.png" alt=""></i>
                 <div class="findword">"
-                    <th:block th:text="${searchPageCategoryVO.currentCategoryName}"></th:block>
+                    <th:block th:text="${searchPageCategoryDto.currentCategoryName}"></th:block>
                     "
                 </div>
             </th:block>
-            <th:block th:if="${searchPageCategoryVO==null}">
+            <th:block th:if="${searchPageCategoryDto==null}">
                 <th:block th:if="${keyword!=null and keyword !=''}">
                     <div class="findword">搜索 "
                         <th:block th:text="${keyword}"></th:block>
@@ -43,13 +43,13 @@
 <!--排序-->
 <div class="sort">
     <div class="list">
-        <a th:href="@{'/search?keyword='+${keyword==null?'':keyword}+'&goodsCategoryId='+${goodsCategoryId==null?'':goodsCategoryId}+'&orderBy=default'}">
+        <a th:href="@{'/search?keyword='+${keyword==null?'':keyword}+'&categoryId='+${categoryId==null?'':categoryId}+'&orderBy=default'}">
             <div th:class="${orderBy==null || orderBy=='default'?'active':''}">推荐</div>
         </a>
-        <a th:href="@{'/search?keyword='+${keyword==null?'':keyword}+'&goodsCategoryId='+${goodsCategoryId==null?'':goodsCategoryId}+'&orderBy=new'}">
+        <a th:href="@{'/search?keyword='+${keyword==null?'':keyword}+'&categoryId='+${categoryId==null?'':categoryId}+'&orderBy=new'}">
             <div th:class="${orderBy=='new'?'active':''}">新品</div>
         </a>
-        <a th:href="@{'/search?keyword='+${keyword==null?'':keyword}+'&goodsCategoryId='+${goodsCategoryId==null?'':goodsCategoryId}+'&orderBy=price'}">
+        <a th:href="@{'/search?keyword='+${keyword==null?'':keyword}+'&categoryId='+${categoryId==null?'':categoryId}+'&orderBy=price'}">
             <div th:class="${orderBy=='price'?'active':''}">价格</div>
         </a>
     </div>

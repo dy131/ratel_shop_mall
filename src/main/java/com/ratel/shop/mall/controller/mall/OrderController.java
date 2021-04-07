@@ -1,12 +1,13 @@
 
 package com.ratel.shop.mall.controller.mall;
 
-import com.ratel.shop.mall.controller.dto.OrderDetailDto;
-import com.ratel.shop.mall.common.Constants;
+import cn.hutool.core.util.StrUtil;
 import com.ratel.shop.mall.common.BusinessException;
+import com.ratel.shop.mall.common.Constants;
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.controller.dto.ShoppingCartItemDto;
-import com.ratel.shop.mall.controller.dto.UserDto;
+import com.ratel.shop.mall.dto.OrderDetailDto;
+import com.ratel.shop.mall.dto.ShoppingCartItemDto;
+import com.ratel.shop.mall.dto.UserDto;
 import com.ratel.shop.mall.entity.Order;
 import com.ratel.shop.mall.service.OrderService;
 import com.ratel.shop.mall.service.ShoppingCartService;
@@ -15,7 +16,6 @@ import com.ratel.shop.mall.util.Result;
 import com.ratel.shop.mall.util.ResultGenerator;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,18 +29,18 @@ public class OrderController {
 
     @Resource
     private ShoppingCartService shoppingCartService;
-    
+
     @Resource
     private OrderService orderService;
 
     @GetMapping("/orders/{orderNo}")
     public String orderDetailPage(HttpServletRequest request, @PathVariable("orderNo") String orderNo, HttpSession httpSession) {
         UserDto user = (UserDto) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
-        OrderDetailDto orderDetailDto = orderService.getOrderDetailByOrderNo(orderNo, user.getUserId());
+        OrderDetailDto orderDetailDto = orderService.queryOrderDetailByOrderNo(orderNo, user.getUserId());
         if (orderDetailDto == null) {
             return "error/error_5xx";
         }
-        request.setAttribute("orderDetailVO", orderDetailVO);
+        request.setAttribute("orderDetailDto", orderDetailDto);
         return "mall/order-detail";
     }
 
@@ -48,13 +48,12 @@ public class OrderController {
     public String orderListPage(@RequestParam Map<String, Object> params, HttpServletRequest request, HttpSession httpSession) {
         UserDto user = (UserDto) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
         params.put("userId", user.getUserId());
-        if (StringUtils.isEmpty(params.get("page"))) {
+        if (params.get("page") == null) {
             params.put("page", 1);
         }
         params.put("limit", Constants.ORDER_SEARCH_PAGE_LIMIT);
-        //封装我的订单数据
-        PageQueryUtil pageUtil = new PageQueryUtil(params);
-        request.setAttribute("orderPageResult", orderService.getMyOrders(pageUtil));
+        PageQueryUtil pageQueryUtil = new PageQueryUtil(params);
+        request.setAttribute("orderPageResult", orderService.queryMyOrdersPageList(pageQueryUtil));
         request.setAttribute("path", "orders");
         return "mall/my-orders";
     }
@@ -62,17 +61,17 @@ public class OrderController {
     @GetMapping("/saveOrder")
     public String saveOrder(HttpSession httpSession) {
         UserDto user = (UserDto) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
-        List<ShoppingCartItemDto> myShoppingCartItems = shoppingCartService.getMyShoppingCartItems(user.getUserId());
-        if (StringUtils.isEmpty(user.getAddress().trim())) {
+        List<ShoppingCartItemDto> shoppingCartItems = shoppingCartService.queryMyShoppingCartItemList(user.getUserId());
+        if (StrUtil.isBlank(user.getAddress().trim())) {
             //无收货地址
             BusinessException.fail(ServiceResultEnum.NULL_ADDRESS_ERROR.getResult());
         }
-        if (CollectionUtils.isEmpty(myShoppingCartItems)) {
+        if (CollectionUtils.isEmpty(shoppingCartItems)) {
             //购物车中无数据则跳转至错误页
             BusinessException.fail(ServiceResultEnum.SHOPPING_ITEM_ERROR.getResult());
         }
         //保存订单并返回订单号
-        String saveOrderResult = orderService.saveOrder(user, myShoppingCartItems);
+        String saveOrderResult = orderService.saveOrder(user, shoppingCartItems);
         //跳转到订单详情页
         return "redirect:/orders/" + saveOrderResult;
     }

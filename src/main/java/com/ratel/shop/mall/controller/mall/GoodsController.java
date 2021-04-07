@@ -5,8 +5,8 @@ import cn.hutool.core.util.StrUtil;
 import com.ratel.shop.mall.common.BusinessException;
 import com.ratel.shop.mall.common.Constants;
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.controller.dto.GoodsDetailDto;
-import com.ratel.shop.mall.controller.dto.SearchPageCategoryDto;
+import com.ratel.shop.mall.dto.GoodsDetailDto;
+import com.ratel.shop.mall.dto.SearchPageCategoryDto;
 import com.ratel.shop.mall.entity.Goods;
 import com.ratel.shop.mall.service.CategoryService;
 import com.ratel.shop.mall.service.GoodsService;
@@ -36,8 +36,9 @@ public class GoodsController {
         params.put("limit", Constants.GOODS_SEARCH_PAGE_LIMIT);
 
         // 封装分类数据
-        final String categoryId = params.get("categoryId").toString();
-        if (params.containsKey("categoryId") && !StrUtil.isBlank(categoryId)) {
+        Object obj = params.get("categoryId");
+        final String categoryId = obj == null ? null : obj.toString();
+        if (!StrUtil.isBlank(categoryId)) {
             SearchPageCategoryDto searchPageCategoryDto = categoryService.queryCategoriesByCategoryId(Long.valueOf(categoryId));
             if (searchPageCategoryDto != null) {
                 request.setAttribute("categoryId", categoryId);
@@ -81,7 +82,7 @@ public class GoodsController {
         GoodsDetailDto goodsDetailDto = new GoodsDetailDto();
         BeanUtil.copyProperties(goods, goodsDetailDto);
         goodsDetailDto.setGoodsCarouselList(goods.getGoodsCarousel().split(","));
-        request.setAttribute("goodsDetail", goodsDetailDto);
+        request.setAttribute("goodsDetailDto", goodsDetailDto);
         return "mall/detail";
     }
 

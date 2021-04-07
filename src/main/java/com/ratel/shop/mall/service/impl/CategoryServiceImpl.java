@@ -1,14 +1,13 @@
 
 package com.ratel.shop.mall.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ratel.shop.mall.common.CategoryLevelEnum;
 import com.ratel.shop.mall.common.Constants;
 import com.ratel.shop.mall.common.ServiceResultEnum;
-import com.ratel.shop.mall.controller.dto.IndexCategoryDto;
-import com.ratel.shop.mall.controller.dto.SearchPageCategoryDto;
-import com.ratel.shop.mall.controller.dto.SecondLevelCategoryDto;
-import com.ratel.shop.mall.controller.dto.ThirdLevelCategoryDto;
+import com.ratel.shop.mall.dto.IndexCategoryDto;
+import com.ratel.shop.mall.dto.SearchPageCategoryDto;
+import com.ratel.shop.mall.dto.SecondLevelCategoryDto;
+import com.ratel.shop.mall.dto.ThirdLevelCategoryDto;
 import com.ratel.shop.mall.entity.GoodsCategory;
 import com.ratel.shop.mall.mapper.GoodsCategoryMapper;
 import com.ratel.shop.mall.service.CategoryService;
@@ -43,14 +42,14 @@ public class CategoryServiceImpl implements CategoryService {
         // 获取二级分类的数据
         List<GoodsCategory> secondLevelCategories = goodsCategoryMapper.queryCategoryByParentIdAndLevel(firstLevelCategoryIds, CategoryLevelEnum.LEVEL_TWO.getLevel(),
                 0);
-        if (!CollectionUtils.isEmpty(secondLevelCategories)) {
+        if (CollectionUtils.isEmpty(secondLevelCategories)) {
             return null;
         }
         List<Long> secondLevelCategoryIds = secondLevelCategories.stream().map(GoodsCategory::getCategoryId).collect(Collectors.toList());
         // 获取三级分类的数据
         List<GoodsCategory> thirdLevelCategories = goodsCategoryMapper.queryCategoryByParentIdAndLevel(secondLevelCategoryIds, CategoryLevelEnum.LEVEL_THREE.getLevel(),
                 0);
-        if (!CollectionUtils.isEmpty(thirdLevelCategories)) {
+        if (CollectionUtils.isEmpty(thirdLevelCategories)) {
             return null;
         }
         // 根据parentId将thirdLevelCategories分组
@@ -69,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
             }
         }
         // 处理一级分类
-        if (!CollectionUtils.isEmpty(secondLevelCategoryDtoList)) {
+        if (CollectionUtils.isEmpty(secondLevelCategoryDtoList)) {
             return null;
         }
         // 根据parentId将secondLevelCategories 分组
@@ -127,7 +126,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public String updateGoodsCategory(GoodsCategory goodsCategory) {
-        GoodsCategory temp = goodsCategoryMapper.selectByPrimaryKey(goodsCategory.getCategoryId());
+        GoodsCategory temp = goodsCategoryMapper.selectById(goodsCategory.getCategoryId());
         if (temp == null) {
             return ServiceResultEnum.DATA_NOT_EXIST.getResult();
         }
@@ -145,7 +144,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public GoodsCategory getGoodsCategoryById(Long id) {
-        return goodsCategoryMapper.selectByPrimaryKey(id);
+        return goodsCategoryMapper.selectById(id);
     }
 
     @Override
@@ -156,7 +155,6 @@ public class CategoryServiceImpl implements CategoryService {
         //删除分类数据
         return goodsCategoryMapper.deleteBatch(ids) > 0;
     }
-
 
 
     @Override

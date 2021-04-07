@@ -17,6 +17,7 @@ public interface GoodsMapper extends BaseMapper<Goods> {
 
     int queryGoodsPageCount(PageQueryUtil pageQueryUtil);
 
+    Goods queryGoodsByGoodId(Long goodsId);
 
     int deleteByPrimaryKey(Long goodsId);
 
@@ -34,7 +35,6 @@ public interface GoodsMapper extends BaseMapper<Goods> {
     List<Goods> findNewBeeMallGoodsList(PageQueryUtil pageUtil);
 
     int getTotalNewBeeMallGoods(PageQueryUtil pageUtil);
-
 
 
 
